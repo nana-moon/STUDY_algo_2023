@@ -6,7 +6,7 @@ public class Main {
 	static boolean[][] visited;
 	static int[] dy = {0,0,1,-1};
 	static int[] dx = {1,-1,0,0};
-	static ArrayList<int[]> list;
+	static PriorityQueue<Integer> pq;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -25,14 +25,19 @@ public class Main {
 
 		for(int i = 0; i < N; i++) {
 			for(int j = 0; j < M; j++) {
+				initPq();
 				visited[i][j] = true;
-				dfs(i,j, 1, arr[i][j], new int[] {-1,-1});
+				dfs(i,j, 1, arr[i][j]);
+				// 꼭 false 처리 해야 함..
 				visited[i][j] = false;
+				if (pq.size() >= 3) {
+					maxSum = Math.max(maxSum, arr[i][j] + pq.poll() + pq.poll() + pq.poll());
+				}
 			}
 		}
 		System.out.println(maxSum);
 	}
-	public static void dfs(int y, int x, int cnt, int sum, int[] pre) {
+	public static void dfs(int y, int x, int cnt, int sum) {
 
 		if (cnt == 4) {
 			maxSum = Math.max(maxSum, sum);
@@ -44,20 +49,15 @@ public class Main {
 			if (ny < 0 || nx < 0 || ny >= N || nx >= M) continue;
 			if (visited[ny][nx]) continue;
 			visited[ny][nx] = true;
-			dfs(ny, nx, cnt+1, sum+arr[ny][nx], new int[] {y, x});
+			dfs(ny, nx, cnt+1, sum+arr[ny][nx]);
 			visited[ny][nx] = false;
-		}
-		// 뻐큐 모양 만들기
-		if (cnt == 3) {
-			for (int i = 0; i < 4; i++) {
-				int sy = pre[0] + dy[i];
-				int sx = pre[1] + dx[i];
-				if (sy < 0 || sx < 0 || sy >= N || sx >= M) continue;
-				if (visited[sy][sx]) continue;
-				visited[sy][sx] = true;
-				dfs(sy, sx, cnt+1, sum+arr[sy][sx], new int[] {y, x});
-				visited[sy][sx] = false;
+			// 볼록할 철 만들기
+			if (cnt == 1) {
+				pq.add(arr[ny][nx]);
 			}
 		}
+	}
+	public static void initPq() {
+		pq = new PriorityQueue<>((a,b) -> b-a);
 	}
 }
