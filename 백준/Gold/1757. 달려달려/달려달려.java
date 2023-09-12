@@ -29,13 +29,10 @@ public class Main {
 				}
 				if (j == 0) {
 					dp[i][j][0] = Math.max(dp[i][j][0], dp[i-1][0][0]);
-					dp[i][j][0] = Math.max(dp[i][j][0], dp[i-1][0][1]); // 없어도 될듯
 				}
 			}
 
 		}
-		// System.out.println(Arrays.deepToString(dp));
 		System.out.println(Math.max(dp[N+1][0][0], dp[N+1][0][1]));
-		// System.out.println(dp[N+1][0][1]);
 	}
 }
